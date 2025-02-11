@@ -1,0 +1,98 @@
+syntax on
+
+autocmd BufEnter * :syntax sync fromstart
+set wildmode=list:longest,full
+
+"Set filetypes and their syntaxs.
+" - 'syntax on' seems to cover most of this.
+" Set PERL syntax highlighting
+au BufRead,BufNewFile *.inc,*.cgi,*.pl set filetype=perl
+
+" Set C++ syntax highlighting
+au BufRead,BufNewFile *.cpp set filetype=cpp
+
+" Set C syntax highlighting
+au BufRead,BufNewFile *.c,*.h set filetype=c
+
+" Set Python syntax highlighting
+au BufRead,BufNewFile *.py set filetype=python
+" Turn off god awful python filetype crap
+let g:python_recommended_style = 0
+
+" Set .rc syntax highlighting
+au BufRead,BufNewFile *.rc set filetype=sh
+
+" *.vim files elsewhere tend to step on these settings so we will
+" apply them last
+autocmd VimEnter * call SetLast()
+function SetLast()
+
+   " Latter versions (8+) of vim appear to have different behavior
+   " when writing files that are not owned by the user.
+   " Consider uncommenting this line if duplicate files start getting                                                      
+   " created after 'file has been changed' warnings.                                                                       
+   " set nowritebackup                                                                                                     
+                                                                                                                           
+   set showmode                                                                                                            
+   set showcmd                                                                                                             
+   set nomodeline                                                                                                          
+   set term=ansi                                                                                                           
+   filetype on                                                                                                             
+   set ignorecase                                                                                                          
+   set smartcase                                                                                                           
+   set gdefault                                                                                                            
+   set backspace=eol,start,indent                                                                                          
+                                                                                                                           
+   set incsearch                                                                                                           
+   let perl_extended_vars=1                                                                                                
+   set hlsearch                                                                                                            
+                                                                                                                           
+   " Fix paste indent issue                                                                                                
+   " This must be set above the below tab settings in vim74+                                                               
+   set paste                                                                                                               
+                                                                                                                           
+   set matchpairs+=<:>                                                                                                     
+   set shiftround                                                                                                          
+   set noai                                                                                                                
+                                                                                                                           
+   set tabstop=3                                                                                                           
+   set shiftwidth=3                                                                                                        
+   set expandtab                                                                                                           
+                                                                                                                           
+   " Fix for REPLACE on load (still needed?)                                                                               
+   set t_u7=                                                                                                               
+                                                                                                                           
+   hi ErrorMsg ctermbg=red ctermfg=white                                                                                   
+   hi Search ctermbg=red ctermfg=black 
+   hi perlStringStartEnd ctermfg=6                                                                                         
+   hi Search ctermfg=7                                                                                                     
+                                                                                                                           
+   " Consider using 'colorscheme desert'                                                                                   
+   hi Character ctermfg=magenta                                                                                            
+   hi String ctermfg=magenta                                                                                               
+   hi Comment ctermfg=red                                                                                                  
+   hi Number ctermfg=red                                                                                                   
+   hi Boolean ctermfg=red                                                                                                  
+   hi Float ctermfg=red                                                                                                    
+   " Autocomplete hightlighting                                                                                            
+   highlight Pmenu ctermbg=gray guibg=gray                                                                                 
+   highlight PmenuSel ctermbg=magenta guibg=magenta                                                                        
+   highlight PmenuSbar ctermbg=blue guibg=blue                                                                             
+   highlight PmenuThumb ctermbg=darkblue guibg=darkblue                                                                    
+endfunction                                                                                                                
+                                                                                                                           
+" Color Highlight Diff files                                                                                               
+augroup PatchDiffHighlight                                                                                                 
+   autocmd!                                                                                                                
+   autocmd! FileType diff           syntax enable                                                                          
+augroup END                                                                                                                
+                                                                                                                           
+" Trim trailing white space function                                                                                       
+fun! TrimWhiteSpace()                                                                                                      
+    let l:save_cursor = getpos('.')                                                                                        
+    %s/\s\+$//e                                                                                                            
+    call setpos('.', l:save_cursor)                                                                                        
+endfun                                                                                                                     
+                                                                                                                           
+" Alais for whitespace function                                                                                            
+command! Trim call TrimWhiteSpace() 
